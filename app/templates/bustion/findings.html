@@ -1,0 +1,289 @@
+{% load static %}
+
+<!DOCTYPE html>
+<!--
+This is a starter template page. Use this page to start your new project from
+scratch. This page gets rid of all links and provides the needed markup only.
+-->
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+
+  <title>Bustion | Findings</title>
+
+  <!-- Font Awesome Icons -->
+  <link rel="stylesheet" href="{% static 'plugins/fontawesome-free/css/all.min.css' %}">
+  <!-- Theme style -->
+  <link rel="stylesheet" href="{% static 'dist/css/adminlte.min.css' %}">
+  <!-- Google Font: Source Sans Pro -->
+  <link href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,400i,700" rel="stylesheet">
+  <!-- DataTables -->
+  <link rel="stylesheet" href="{% static 'plugins/datatables-bs4/css/dataTables.bootstrap4.min.css' %}">
+  <link rel="stylesheet" href="{% static 'plugins/datatables-responsive/css/responsive.bootstrap4.min.css' %}">
+  <link rel="stylesheet" href="{% static 'plugins/datatables-buttons/css/buttons.bootstrap4.min.css' %}">
+
+
+  <!-- REQUIRED SCRIPTS -->
+
+  <!-- jQuery -->
+  <script src="{% static 'plugins/jquery/jquery.min.js' %}"></script>
+  <!-- Bootstrap 4 -->
+  <script src="{% static 'plugins/bootstrap/js/bootstrap.bundle.min.js' %}"></script>
+  <!-- AdminLTE App -->
+  <script src="{% static 'dist/js/adminlte.min.js' %}"></script>
+  <!-- DataTables  & Plugins -->
+  <script src="{% static 'plugins/datatables/jquery.dataTables.min.js' %}"></script>
+  <script src="{% static 'plugins/datatables-bs4/js/dataTables.bootstrap4.min.js' %}"></script>
+  <script src="{% static 'plugins/datatables-responsive/js/dataTables.responsive.min.js' %}"></script>
+  <script src="{% static 'plugins/datatables-responsive/js/responsive.bootstrap4.min.js' %}"></script>
+  <script src="{% static 'plugins/datatables-buttons/js/dataTables.buttons.min.js' %}"></script>
+  <script src="{% static 'plugins/datatables-buttons/js/buttons.bootstrap4.min.js' %}"></script>
+  <script src="{% static 'plugins/jszip/jszip.min.js' %}"></script>
+  <script src="{% static 'plugins/pdfmake/pdfmake.min.js' %}"></script>
+  <script src="{% static 'plugins/pdfmake/vfs_fonts.js' %}"></script>
+  <script src="{% static 'plugins/datatables-buttons/js/buttons.html5.min.js' %}"></script>
+  <script src="{% static 'plugins/datatables-buttons/js/buttons.print.min.js' %}"></script>
+  <script src="{% static 'plugins/datatables-buttons/js/buttons.colVis.min.js' %}"></script>
+</head>
+<body class="hold-transition sidebar-mini">
+<div class="wrapper">
+
+  <nav class="navbar navbar-expand-sm bg-dark navbar-dark afixed-top">
+  <!-- Brand -->
+  <a class="navbar-brand" href="/"><img src="{% static 'images/logo.png' %}" style="max-width:60px;max-height:40px"></a>
+
+  <!-- Toggler/collapsibe Button -->
+  <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#collapsibleNavbar">
+    <span class="navbar-toggler-icon"></span>
+  </button>
+
+
+  <div class="collapse navbar-collapse" id="collapsibleNavbar">
+  <ul class="navbar-nav mr-auto">
+  <li class="nav-item  active"><a class="nav-link" href="/bustion/">Home</a></li>
+
+
+
+
+  </ul>
+
+  <ul class="navbar-nav">
+  <li class="nav-item dropdown">
+      <a class="nav-link dropdown-toggle" href="#" id="navbardrop" data-toggle="dropdown">{{username}}</a>
+      <div class="dropdown-menu">
+      <a class="dropdown-item ion-log-out" href="/bustion/logout"> Logout</a>
+      </div>
+    </li>
+  <li class="nav-item"><a class="nav-link" href="#"></a></li>
+  <li class="nav-item"></li>
+  </ul>
+
+  </div>
+</nav>
+
+
+<!-- Main content -->
+
+<!-- New project modal -->
+<div class="modal" id="addfinding">
+  <div class="modal-dialog">
+  <div class="modal-content">
+    <div class="modal-header"><h4 class="modal-title">New Finding</h4><button type="button" class="close" data-dismiss="modal">&times;</button></div>
+
+    <div class="modal-body">
+    <form method="post" action="/bustion/projects/webs/findings/add">
+      <div class="form-group">
+        <label for="InputName">Path</label>
+        <input type="text" class="form-control" id="InputName" name="path" placeholder="Enter path" minlength="1" maxlength="100" >
+
+        <label for="InputURL">URL</label>
+        <input type="text" class="form-control" id="InputURL" name="url" placeholder="Enter full URL" minlength="4" maxlength="100" required>
+
+        <label for="InputURL">Code</label>
+        <input type="text" class="form-control" id="InputCode" name="code" placeholder="Enter response code" minlength="2" maxlength="100" required>
+      </div>
+      {% csrf_token %}
+      <input type="hidden" name="pid" value="{{web.project_id}}">
+      <input type="hidden" name="wid" value="{{web.id}}">
+      <button type="submit" class="btn btn-primary">Submit</button>
+    </form>
+    </div>
+    <div class="modal-footer"></div>
+    </div>
+  </div>
+</div>
+
+<!-- Delete All -->
+<div class="modal" id="deleteall">
+  <div class="modal-dialog">
+  <div class="modal-content">
+    <div class="modal-header"><h4 class="modal-title">Delete All Findings?</h4><button type="button" class="close" data-dismiss="modal">&times;</button></div>
+
+    <div class="modal-body">
+    <form method="post" action="/bustion/projects/webs/findings/deleteall">
+      <div class="form-group">
+        <p for="InputName">This action can't be reverted.</p>
+        {% csrf_token %}
+        <input type="hidden" name="wid" value="{{web.id}}" />
+        <input type="hidden" name="pid" value="{{web.project_id}}" />
+      </div>
+      <button type="submit" class="btn btn-primary">Delete</button>
+    </form>
+    </div>
+    <div class="modal-footer"></div>
+    </div>
+  </div>
+</div>    
+
+<!-- Projects list -->
+
+<div class="wrapper">
+
+  <!-- Content Header (Page header) -->
+    <section class="content-header">
+      <div class="container-fluid">
+        <div class="row mb-2">
+          <div class="col-sm-8">
+            <h1><a href="/bustion/projects/view?pid={{web.project_id}}">{{project.project_name}}</a>/<a href="/bustion/projects/webs?pid={{web.project_id}}">Webs</a>/Findings</h1>
+          </div>
+          <div class="col-sm-4">
+            <div class="float-right">
+            <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#addfinding"><i class="fas fa-plus"></i> New Finding</button>
+            <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#deleteall"><i class="fas fa-trash"></i> Delete All</button>
+            </div>
+          </div>
+        </div>
+        {% if errorMessage %}
+        <div class="row mb-2">
+          <div class="col-sm-12">
+            <h3 style="color: red">{{errorMessage}}</h3>
+          </div>
+        </div>
+        {% endif %}
+      </div>
+    </section>
+
+  <!-- Main content -->
+  <section class="content">
+    <div class="container-fluid">
+      <div class="row">
+        <div class="col-12">
+          <div class="card">
+            <div class="card-header">
+              <h3 class="card-title">Click on a web to see details.</h3>
+            </div>
+
+            <div class="card-body">
+
+              <table id="findings_table" class="table table-bordered table-hover">
+                <thead>
+                  <tr>
+                    <th>Path</th>
+                    <th>URL</th>
+                    <th>Code</th>
+                    <th>Size</th>
+                    <th>Options</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {% for finding in findings %}
+                  <tr>
+                    <td>{{finding.path}}</td>
+                    <td><a href="{{finding.url}}">{{finding.url}}</a></td>
+                    <td>{{finding.code}}</td>
+                    <td>{{finding.size}}</td>
+                    <td>
+
+                        <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#editfinding{{finding.id}}"><i class="fas fa-edit"></i> Edit</button>
+
+                        <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#deletefinding"><i class="fas fa-trash"></i> Delete</button>
+
+                    </td>
+                  </tr>
+
+                  <!-- Edit web modal -->
+                  <div class="modal" id="editfinding{{finding.id}}">
+                    <div class="modal-dialog">
+                    <div class="modal-content">
+                      <div class="modal-header"><h4 class="modal-title">Edit Finding</h4><button type="button" class="close" data-dismiss="modal">&times;</button></div>
+
+                      <div class="modal-body">
+                      <form method="post" action="/bustion/projects/webs/update">
+                        <div class="form-group">
+                          <label for="InputName">Path</label>
+                          <input type="text" class="form-control" id="InputName" name="shortname" value="{{finding.path}}" minlength="1" maxlength="100">
+
+                          <label for="InputURL">URL</label>
+                          <input type="text" class="form-control" id="InputURL" name="url" value="{{finding.url}}" minlength="4" maxlength="100" required>
+
+                          <label for="InputCode">Code</label>
+                          <input type="text" class="form-control" id="InputCode" name="code" value="{{finding.code}}" minlength="2" maxlength="100" required>
+                        </div>
+                        {% csrf_token %}
+                        <input type="hidden" name="pid" value="{{web.project_id}}">
+                        <input type="hidden" name="wid" value="{{web.id}}">
+                        <button type="submit" class="btn btn-primary">Submit</button>
+                      </form>
+                      </div>
+                      <div class="modal-footer"></div>
+                      </div>
+                    </div>
+                  </div>
+
+                  <!-- Delete web modal -->
+                  <div class="modal" id="deletefinding">
+                    <div class="modal-dialog">
+                    <div class="modal-content">
+                      <div class="modal-header"><h4 class="modal-title">Delete Web?</h4><button type="button" class="close" data-dismiss="modal">&times;</button></div>
+
+                      <div class="modal-body">
+                      <form method="post" action="/bustion/projects/webs/findings/delete">
+                        <div class="form-group">
+                          <p for="InputName">This action can't be reverted.</p>
+                          {% csrf_token %}
+                          <input type="hidden" name="fid" value="{{finding.id}}" />
+                          <input type="hidden" name="wid" value="{{web.id}}" />
+                          <input type="hidden" name="pid" value="{{web.project_id}}" />
+                        </div>
+                        <button type="submit" class="btn btn-primary">Delete</button>
+                      </form>
+                      </div>
+                      <div class="modal-footer"></div>
+                      </div>
+                    </div>
+                  </div>
+                  {% endfor %}
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+
+
+</div>
+<!-- ./wrapper -->
+
+<!-- Projects datatable -->
+
+<script>
+    $(function () {
+    $('#findings_table').DataTable({
+      "paging": true,
+      "lengthChange": false,
+      "searching": false,
+      "ordering": true,
+      "info": true,
+      "autoWidth": false,
+      "responsive": true,
+    });
+  });
+</script>
+
+</body>
+</html>
