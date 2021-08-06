@@ -89,12 +89,40 @@ scratch. This page gets rid of all links and provides the needed markup only.
 
 <div class="wrapper">
 
+  <!-- Content Header (Page header) -->
+    <section class="content-header">
+      <div class="container-fluid">
+        <div class="row mb-2">
+          <div class="col-sm-6">
+            <h1>Project Name: <a href="/bustion/projects/view?pid={{info.pid}}">{{info.project_name}}</a></h1>
+          </div>
+
+          <div class="col-sm-6">
+            <h1> Links: 
+              <a href="/bustion/projects/view?pid={{info.pid}}">Dashboard</a> /
+              <a href="/bustion/projects/webs?pid={{info.pid}}">Webs</a> /
+              <a href="/bustion/projects/fuzzers?pid={{info.pid}}">Fuzzers</a> /
+              <a href="/bustion/projects/launchManager?pid={{info.pid}}">Launcher</a>
+            </h1>
+          </div>
+        </div>
+        {% if errorMessage %}
+        <div class="row mb-2">
+          <div class="col-sm-12">
+            <h3 style="color: red">{{errorMessage}}</h3>
+          </div>
+        </div>
+        {% endif %}
+      </div>
+    </section>
+
   <section class="content">
 
     <div class="container-fluid">
       <div class="row">
         <div class="col-12">
           <div class="card">
+
             <div class="card-body">
               <div class="row">
 

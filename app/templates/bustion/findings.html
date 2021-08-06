@@ -145,10 +145,18 @@ scratch. This page gets rid of all links and provides the needed markup only.
     <section class="content-header">
       <div class="container-fluid">
         <div class="row mb-2">
-          <div class="col-sm-8">
+          <div class="col-sm-6">
             <h1><a href="/bustion/projects/view?pid={{web.project_id}}">{{project.project_name}}</a>/<a href="/bustion/projects/webs?pid={{web.project_id}}">Webs</a>/Findings</h1>
           </div>
           <div class="col-sm-4">
+            <h1> Links: 
+              <a href="/bustion/projects/view?pid={{project.pid}}">Dashboard</a> /
+              <a href="/bustion/projects/webs?pid={{project.pid}}">Webs</a> /
+              <a href="/bustion/projects/fuzzers?pid={{project.pid}}">Fuzzers</a> /
+              <a href="/bustion/projects/launchManager?pid={{project.pid}}">Launcher</a>
+            </h1>
+          </div>
+          <div class="col-sm-2">
             <div class="float-right">
             <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#addfinding"><i class="fas fa-plus"></i> New Finding</button>
             <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#deleteall"><i class="fas fa-trash"></i> Delete All</button>
@@ -281,6 +289,9 @@ scratch. This page gets rid of all links and provides the needed markup only.
       "info": true,
       "autoWidth": false,
       "responsive": true,
+      "scrollX": "true",
+      "scrollY": "50%",
+      "scrollCollapse": true,
     });
   });
 </script>

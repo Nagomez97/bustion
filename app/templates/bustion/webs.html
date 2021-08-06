@@ -120,10 +120,18 @@ scratch. This page gets rid of all links and provides the needed markup only.
     <section class="content-header">
       <div class="container-fluid">
         <div class="row mb-2">
-          <div class="col-sm-8">
+          <div class="col-sm-6">
             <h1><a href="/bustion/projects/view?pid={{project.pid}}">{{project.project_name}}</a>/<a href="/bustion/projects/webs?pid={{project.pid}}">Webs</a></h1>
           </div>
           <div class="col-sm-4">
+            <h1> Links: 
+              <a href="/bustion/projects/view?pid={{project.pid}}">Dashboard</a> /
+              <a href="/bustion/projects/webs?pid={{project.pid}}">Webs</a> /
+              <a href="/bustion/projects/fuzzers?pid={{project.pid}}">Fuzzers</a> /
+              <a href="/bustion/projects/launchManager?pid={{project.pid}}">Launcher</a>
+            </h1>
+          </div>
+          <div class="col-sm-2">
             <button type="button" class="btn btn-primary float-right" data-toggle="modal" data-target="#addweb"><i class="fas fa-plus"></i> New Web</button>
           </div>
         </div>
@@ -168,7 +176,7 @@ scratch. This page gets rid of all links and provides the needed markup only.
                     <td>{{web.last_fuzzer}}</td>
                     <td>{{web.fuzzer_status}}</td>
                     <td>{{web.findings}}</td>
-                    <td>
+                    <td style="white-space: nowrap;">
 
                         <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#editweb{{web.id}}"><i class="fas fa-edit"></i> Edit Web</button>
 
