@@ -49,7 +49,8 @@ def home(request, errorMessage=None):
 	if request.user.is_authenticated:
 		username = request.user.username
 		projects = database.getProjects()
-		return render(request, 'bustion/home.html', {'username': username, 'projects':projects, 'errorMessage': errorMessage})
+		jobs = fuzz.getRunningJobs()
+		return render(request, 'bustion/home.html', {'username': username, 'projects':projects, 'errorMessage': errorMessage, 'jobs': jobs})
 
 	else:
 		return redirect('/bustion/login')
@@ -67,8 +68,9 @@ def viewProject(request, errorMessage=None):
 
 		if pid is not None:
 			info = database.getProjectInfo(pid)
+			jobs = fuzz.getRunningJobs()
 			if info:
-				return render(request, 'bustion/project.html', {'info': info, 'username': request.user.username, 'errorMessage': errorMessage})
+				return render(request, 'bustion/project.html', {'jobs':jobs, 'info': info, 'username': request.user.username, 'errorMessage': errorMessage})
 	
 	
 	return redirect('/bustion/home')
@@ -115,7 +117,8 @@ def viewFuzzers(request, errorMessage=None, pid=None):
 						pid = request.GET['pid']
 			fuzzers = database.getFuzzers(pid)
 			project = database.getProjectInfo(pid)
-			return render(request, 'bustion/fuzzers.html', {'project': project, 'username': username, 'fuzzers':fuzzers, 'errorMessage': errorMessage})
+			jobs = fuzz.getRunningJobs()
+			return render(request, 'bustion/fuzzers.html', {'jobs': jobs, 'project': project, 'username': username, 'fuzzers':fuzzers, 'errorMessage': errorMessage})
 		except Exception as e:
 			logger.error('Error showing fuzzer. Exception: {}'.format(e))
 			return home(request, 'Error showing fuzzers.')
@@ -209,7 +212,8 @@ def viewWebs(request, errorMessage=None):
 			username = request.user.username
 			webs = database.getWebsFromPid(pid)
 			project = database.getProjectInfo(pid)
-			return render(request, 'bustion/webs.html', {'project': project, 'username': username, 'webs':webs, 'errorMessage': errorMessage})
+			jobs = fuzz.getRunningJobs()
+			return render(request, 'bustion/webs.html', {'jobs':jobs, 'project': project, 'username': username, 'webs':webs, 'errorMessage': errorMessage})
 
 		except Exception as e:
 			logger.error('Error showing webs. Exception: {}'.format(e))
@@ -288,7 +292,8 @@ def findings(request, errorMessage=None):
 			web = database.getWebInfo(wid)
 			p_info = database.getProjectInfo(web.project_id)
 			findings = database.getFindings(wid)
-			return render(request, 'bustion/findings.html', {'findings': findings,'web': web, 'project': p_info, 'username': username, 'errorMessage': errorMessage})
+			jobs = fuzz.getRunningJobs()
+			return render(request, 'bustion/findings.html', {'jobs':jobs, 'findings': findings,'web': web, 'project': p_info, 'username': username, 'errorMessage': errorMessage})
 
 		except Exception as e:
 			logger.error('Error showing findings. Exception: {}'.format(e))
@@ -364,8 +369,9 @@ def launchManager(request, errorMessage=None):
 			webs = database.getWebsFromPid(pid)
 			project = database.getProjectInfo(pid)
 			fuzzers = database.getFuzzers(pid)
+			jobs = fuzz.getRunningJobs()
 
-			return render(request, 'bustion/launch.html', {'fuzzers': fuzzers, 'project': project, 'username': username, 'webs':webs, 'errorMessage': errorMessage})
+			return render(request, 'bustion/launch.html', {'jobs':jobs, 'fuzzers': fuzzers, 'project': project, 'username': username, 'webs':webs, 'errorMessage': errorMessage})
 
 		except Exception as e:
 			logger.error('Error showing launch manager. Exception: {}'.format(e))

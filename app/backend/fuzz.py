@@ -8,6 +8,9 @@ logger = logging.getLogger(__name__)
 
 running_processes = []
 
+def getRunningJobs():
+	return len(running_processes)
+
 class Result:
 	def __init__(self, wid, url, path, size, code):
 		self.wid = wid
@@ -65,7 +68,6 @@ def webFuzz(wid, web, fuzzer):
 
 
 def daemon(pid, web, fuzzer):
-	database.updateWebStatus(pid, web.wid, fuzzer.name, "RUNNING")
 	logger.warning('Fuzzing on {} started.'.format(web.web))
 
 	results = webFuzz(web.wid, web.web, fuzzer)
@@ -146,6 +148,9 @@ def launch(pid, web, fuzzer):
 
 		# Daemon
 		d.daemon = True
+
+		# Updates status to RUNNING
+		database.updateWebStatus(pid, web.wid, fuzzer.name, "RUNNING")
 
 		# Appends to running_processes
 		running_processes.append(d)
