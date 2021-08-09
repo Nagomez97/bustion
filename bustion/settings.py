@@ -89,6 +89,7 @@ DATABASES = {
         'NAME': 'bustion',
         'USER': 'purple',
         'PASSWORD': 'purple',
+        'CONN_MAX_AGE': 3600,
         'HOST': 'localhost',
         'PORT': '3306'
     }

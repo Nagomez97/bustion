@@ -2,6 +2,7 @@ import wfuzz
 import multiprocessing
 import logging
 from app.backend import database
+from django import db
 
 logger = logging.getLogger(__name__)
 
@@ -39,7 +40,7 @@ def webFuzz(wid, web, fuzzer):
 			payload += "-w {} -z list,{} {}/FUZZFUZ2Z".format(fuzzer.wordlist, extensions, web)
 
 		else:
-			payload += "{}/FUZZ".format(web)
+			payload += "-w {} {}/FUZZ".format(fuzzer.wordlist, web)
 
 		logger.warning("Fuzz payload: wfuzz.py {}".format(payload))
 		s = wfuzz.get_session(payload)
@@ -139,6 +140,11 @@ def launch(pid, web, fuzzer):
 			if p.name == web.web:
 				return -1
 
+		# Updates status to RUNNING
+		database.updateWebStatus(pid, web.wid, fuzzer.name, "RUNNING")
+
+		db.connections.close_all()
+
 		# Creates thread
 		d = multiprocessing.Process(
 			name=web.web,
@@ -149,8 +155,6 @@ def launch(pid, web, fuzzer):
 		# Daemon
 		d.daemon = True
 
-		# Updates status to RUNNING
-		database.updateWebStatus(pid, web.wid, fuzzer.name, "RUNNING")
 
 		# Appends to running_processes
 		running_processes.append(d)
