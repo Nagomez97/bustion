@@ -23,8 +23,8 @@ class Web(models.Model):
 	url = models.CharField(max_length=100)
 	shortname = models.CharField(max_length=100)
 	project = models.ForeignKey(Project, on_delete=models.CASCADE)
-	last_fuzzer = models.CharField(max_length=100, default="")
 	fuzzer_status = models.CharField(max_length=100, default="")
+	last_fuzzer = models.CharField(max_length=100, default="")
 
 class Finding(models.Model):
 	path = models.CharField(max_length=100)
