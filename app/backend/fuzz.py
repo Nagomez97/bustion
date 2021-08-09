@@ -76,6 +76,7 @@ def daemon(pid, web, fuzzer):
 	if results is None:
 		database.updateWebStatus(pid, web.wid, fuzzer.name, "ERROR")
 		logger.error('Fuzzing on {} finished with errors.'.format(web.web))
+		killJob(web, pid)
 		return
 
 
@@ -84,6 +85,7 @@ def daemon(pid, web, fuzzer):
 
 	logger.warning('Fuzzing on {} finished.'.format(web.web))
 	database.updateWebStatus(pid, web.wid, fuzzer.name, "FINISHED")
+	killJob(web, pid)
 
 
 def checkStatus(pid):
@@ -98,10 +100,17 @@ def checkStatus(pid):
 
 			for p in running_processes:
 
+				# Process has finished but still lives in the array
+				if not p.is_alive():
+					running_processes.remove(p)
+					continue
+
+				# Process has not finished and still lives in the array
 				if p.name == web.url:
 					alive = True
 					process = p
 
+			# There is no process in the array which the same name as current web
 			if not alive:
 				database.updateWebStatus(pid, web.id, web.last_fuzzer, "KILLED")
 
