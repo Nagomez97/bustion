@@ -102,6 +102,7 @@ def checkStatus(pid):
 
 				# Process has finished but still lives in the array
 				if not p.is_alive():
+					p.terminate()
 					running_processes.remove(p)
 					continue
 
