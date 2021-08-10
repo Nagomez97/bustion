@@ -207,7 +207,7 @@ scratch. This page gets rid of all links and provides the needed markup only.
 
                         <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#editfinding{{finding.id}}"><i class="fas fa-edit"></i> Edit</button>
 
-                        <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#deletefinding"><i class="fas fa-trash"></i> Delete</button>
+                        <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#deletefinding{{finding.id}}"><i class="fas fa-trash"></i> Delete</button>
 
                     </td>
                   </tr>
@@ -242,7 +242,7 @@ scratch. This page gets rid of all links and provides the needed markup only.
                   </div>
 
                   <!-- Delete web modal -->
-                  <div class="modal" id="deletefinding">
+                  <div class="modal" id="deletefinding{{finding.id}}">
                     <div class="modal-dialog">
                     <div class="modal-content">
                       <div class="modal-header"><h4 class="modal-title">Delete Web?</h4><button type="button" class="close" data-dismiss="modal">&times;</button></div>
