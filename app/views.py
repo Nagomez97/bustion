@@ -312,6 +312,8 @@ def deleteFinding(request):
 		if fid is not None:
 			if not database.deleteFinding(fid):
 				return findings(request, 'Could not delete Finding.')
+		else:
+			return findings(request, 'Could not delete Finding. No FID was sent.')
 	
 	
 	return findings(request)	

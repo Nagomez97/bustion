@@ -241,6 +241,7 @@ def addManualFinding(wid, path, url, code):
 def deleteFinding(finding_id):
 	try:
 		Finding.objects.filter(id=finding_id).delete()
+		logger.warning('Finding with id {} was deleted.'.format(finding_id))
 
 		return True
 
