@@ -126,7 +126,7 @@ def killJob(web, pid):
 
 		for p in running_processes:
 
-			if p.name == web.url:
+			if p.name == web.web:
 				p.terminate()
 				running_processes.remove(p)
 
