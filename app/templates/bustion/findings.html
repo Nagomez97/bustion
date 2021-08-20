@@ -94,7 +94,7 @@ scratch. This page gets rid of all links and provides the needed markup only.
     <div class="modal-header"><h4 class="modal-title">New Finding</h4><button type="button" class="close" data-dismiss="modal">&times;</button></div>
 
     <div class="modal-body">
-    <form method="post" action="/bustion/projects/webs/findings/add">
+    <form id="AddFindingForm" method="post" action="/bustion/projects/webs/findings/add">
       <div class="form-group">
         <label for="InputName">Path</label>
         <input type="text" class="form-control" id="InputName" name="path" placeholder="Enter path" minlength="1" maxlength="100" >
@@ -108,7 +108,7 @@ scratch. This page gets rid of all links and provides the needed markup only.
       {% csrf_token %}
       <input type="hidden" name="pid" value="{{web.project_id}}">
       <input type="hidden" name="wid" value="{{web.id}}">
-      <button type="submit" class="btn btn-primary">Submit</button>
+      <button type="button" onclick="addFinding();" class="btn btn-primary">Submit</button>
     </form>
     </div>
     <div class="modal-footer"></div>
@@ -123,14 +123,14 @@ scratch. This page gets rid of all links and provides the needed markup only.
     <div class="modal-header"><h4 class="modal-title">Delete All Findings?</h4><button type="button" class="close" data-dismiss="modal">&times;</button></div>
 
     <div class="modal-body">
-    <form method="post" action="/bustion/projects/webs/findings/deleteall">
+    <form id="deleteAllFindingsForm" method="post" action="/bustion/projects/webs/findings/deleteall">
       <div class="form-group">
         <p for="InputName">This action can't be reverted.</p>
         {% csrf_token %}
         <input type="hidden" name="wid" value="{{web.id}}" />
         <input type="hidden" name="pid" value="{{web.project_id}}" />
       </div>
-      <button type="submit" class="btn btn-primary">Delete</button>
+      <button type="button" onclick="deleteAllFindings();" class="btn btn-primary">Delete</button>
     </form>
     </div>
     <div class="modal-footer"></div>
@@ -162,6 +162,11 @@ scratch. This page gets rid of all links and provides the needed markup only.
             <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#addfinding"><i class="fas fa-plus"></i> New Finding</button>
             <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#deleteall"><i class="fas fa-trash"></i> Delete All</button>
             </div>
+          </div>
+        </div>
+        <div class="row mb-2 d-none" id="GenericErrorMessageModal">
+          <div class="col-sm-12">
+            <h3 id="GenericErrorMessage" style="color: red"></h3>
           </div>
         </div>
         {% if errorMessage %}
@@ -197,73 +202,7 @@ scratch. This page gets rid of all links and provides the needed markup only.
                   </tr>
                 </thead>
                 <tbody>
-                  {% for finding in findings %}
-                  <tr>
-                    <td>{{finding.path}}</td>
-                    <td><a href="{{finding.url}}">{{finding.url}}</a></td>
-                    <td>{{finding.code}}</td>
-                    <td>{{finding.size}}</td>
-                    <td>
-
-                        <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#editfinding{{finding.id}}"><i class="fas fa-edit"></i> Edit</button>
-
-                        <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#deletefinding{{finding.id}}"><i class="fas fa-trash"></i> Delete</button>
-
-                    </td>
-                  </tr>
-
-                  <!-- Edit web modal -->
-                  <div class="modal" id="editfinding{{finding.id}}">
-                    <div class="modal-dialog">
-                    <div class="modal-content">
-                      <div class="modal-header"><h4 class="modal-title">Edit Finding</h4><button type="button" class="close" data-dismiss="modal">&times;</button></div>
-
-                      <div class="modal-body">
-                      <form method="post" action="/bustion/projects/webs/update">
-                        <div class="form-group">
-                          <label for="InputName">Path</label>
-                          <input type="text" class="form-control" id="InputName" name="shortname" value="{{finding.path}}" minlength="1" maxlength="100">
-
-                          <label for="InputURL">URL</label>
-                          <input type="text" class="form-control" id="InputURL" name="url" value="{{finding.url}}" minlength="4" maxlength="100" required>
-
-                          <label for="InputCode">Code</label>
-                          <input type="text" class="form-control" id="InputCode" name="code" value="{{finding.code}}" minlength="2" maxlength="100" required>
-                        </div>
-                        {% csrf_token %}
-                        <input type="hidden" name="pid" value="{{web.project_id}}">
-                        <input type="hidden" name="wid" value="{{web.id}}">
-                        <button type="submit" class="btn btn-primary">Submit</button>
-                      </form>
-                      </div>
-                      <div class="modal-footer"></div>
-                      </div>
-                    </div>
-                  </div>
-
-                  <!-- Delete web modal -->
-                  <div class="modal" id="deletefinding{{finding.id}}">
-                    <div class="modal-dialog">
-                    <div class="modal-content">
-                      <div class="modal-header"><h4 class="modal-title">Delete Web?</h4><button type="button" class="close" data-dismiss="modal">&times;</button></div>
-
-                      <div class="modal-body">
-                      <form method="post" action="/bustion/projects/webs/findings/delete">
-                        <div class="form-group">
-                          <p for="InputName">This action can't be reverted.</p>
-                          {% csrf_token %}
-                          <input type="hidden" name="fid" value="{{finding.id}}" />
-                          <input type="hidden" name="wid" value="{{web.id}}" />
-                          <input type="hidden" name="pid" value="{{web.project_id}}" />
-                        </div>
-                        <button type="submit" class="btn btn-primary">Delete</button>
-                      </form>
-                      </div>
-                      <div class="modal-footer"></div>
-                      </div>
-                    </div>
-                  </div>
-                  {% endfor %}
+                  
                 </tbody>
               </table>
             </div>
@@ -272,6 +211,37 @@ scratch. This page gets rid of all links and provides the needed markup only.
       </div>
     </div>
   </section>
+
+  <div class="modal" id="editFindingModal">
+    <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header"><h4 class="modal-title">Edit Finding</h4><button type="button" class="close" data-dismiss="modal">&times;</button></div>
+
+      <div class="modal-body">
+      <form id="UpdateForm" method="post" action="/bustion/projects/webs/update">
+        <div id="EditErrorMessage" class='d-none'>
+          <h3 class="text-danger">Error trying to modify.</h3>
+        </div>
+        <div class="form-group">
+          <label for="EditPath">Path</label>
+          <input type="text" class="form-control" id="EditPath" name="path" value="" minlength="1" maxlength="100">
+
+          <label for="EditURL">URL</label>
+          <input type="text" class="form-control" id="EditURL" name="url" value="" minlength="4" maxlength="100" required>
+
+          <label for="EditCode">Code</label>
+          <input type="text" class="form-control" id="EditCode" name="code" value="" minlength="2" maxlength="100" required>
+        </div>
+        {% csrf_token %}
+        <input type="hidden" name="fid" id="EditFID" value="">
+        <input type="hidden" name="wid" value="{{web.id}}">
+        <button type="button" id="EditSubmit" onclick="" class="btn btn-primary">Submit</button>
+      </form>
+      </div>
+      <div class="modal-footer"></div>
+      </div>
+    </div>
+  </div>
 
 
 
@@ -283,6 +253,22 @@ scratch. This page gets rid of all links and provides the needed markup only.
 <script>
     $(function () {
     $('#findings_table').DataTable({
+      "serverSide": true,
+      "ajax": {
+          url: "/bustion/projects/webs/findings/paged",
+          type: 'POST',
+          headers: {'X-CSRFToken': '{{ csrf_token }}'},
+          data: function ( d ) {
+                d.wid = "{{web.id}}";
+            }
+      },
+      "columnDefs": [
+        { "name": "path",   "targets": 0 },
+        { "name": "url",  "targets": 1 },
+        { "name": "size", "targets": 2 },
+        { "name": "code",  "targets": 3 },
+        { "name": "web",    "targets": 4 }
+      ],
       "paging": true,
       "lengthChange": false,
       "searching": false,
@@ -295,6 +281,87 @@ scratch. This page gets rid of all links and provides the needed markup only.
       "scrollCollapse": true,
     });
   });
+</script>
+
+<script type="text/javascript">
+
+  function editFindingModal(fid){
+    $.get("/bustion/projects/webs/findings/info?fid="+fid, function(data){
+      $('#EditPath').attr('value',data.path);
+      $('#EditURL').attr('value',data.url);
+      $('#EditCode').attr('value',data.code);
+      $('#EditFID').attr('value',fid);
+      $('#EditSubmit').attr('onclick', "editFinding(" + fid + ");")
+      $('#editFindingModal').modal('show');
+    })
+  }
+
+  function editFinding(fid, path, url, code){
+    $.post("/bustion/projects/webs/findings/update", $("#UpdateForm").serialize(), function (data){
+      var status = data.status;
+
+      if (status == "ok"){
+        $('#editFindingModal').modal('hide'); // Removes modal
+        $('#findings_table').DataTable().ajax.reload();
+      }
+      else {
+        $('#EditErrorMessage').removeClass('d-none'); // Shows error message
+      }
+    })
+  }
+
+  function addFinding(){
+    $.post("/bustion/projects/webs/findings/add", $("#AddFindingForm").serialize(), function (data){
+      var status = data.status;
+
+      if (status == "ok"){
+        $('#addfinding').modal('hide'); // Removes modal
+        $('#findings_table').DataTable().ajax.reload();
+      }
+      else {
+        $('#GenericErrorMessage').text('Error deleting finding.')
+        $('#GenericErrorMessageModal').removeClass('d-none'); // Shows error message
+      }
+    })
+  }
+
+  function deleteFinding(fid){
+
+    $.ajax({
+      url: "/bustion/projects/webs/findings/delete",
+      type: 'post',
+      data: {'fid': fid},
+      headers: {'X-CSRFToken': '{{ csrf_token }}'},
+      dataType: 'json',
+      success: function (data){
+        var status = data.status;
+
+        if (status == "ok"){
+          $('#findings_table').DataTable().ajax.reload();
+        }
+        else {
+          $('#GenericErrorMessage').text('Error deleting finding.')
+          $('#GenericErrorMessageModal').removeClass('d-none'); // Shows error message
+        }
+      }
+    })
+  }
+
+  function deleteAllFindings(){
+    $.post("/bustion/projects/webs/findings/deleteall", $("#deleteAllFindingsForm").serialize(), function (data){
+      var status = data.status;
+
+      if (status == "ok"){
+        $('#findings_table').DataTable().ajax.reload();
+        $('#deleteall').modal('hide');
+      }
+      else {
+        $('#GenericErrorMessage').text('Error deleting findings.')
+        $('#GenericErrorMessageModal').removeClass('d-none'); // Shows error message
+        $('#deleteall').modal('hide');
+      }
+    })
+  }
 </script>
 
 </body>

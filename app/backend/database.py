@@ -1,5 +1,9 @@
 from app.models import Project, Web, Finding, Fuzzer
 import logging
+from math import floor
+
+from django.core.paginator import Paginator
+import json
 
 logger = logging.getLogger(__name__)
 
@@ -118,7 +122,7 @@ def updateFuzzer(pid, fid, name, threads, wordlist, ua, extensions, codes, verb,
 		return True
 
 	except Exception as e:
-		logger.error('Error deleting fuzzer from database. {}'.format(e))
+		logger.error('Error updating fuzzer from database. {}'.format(e))
 		return False
 
 # deletes a fuzzer
@@ -227,6 +231,17 @@ def addFinding(wid, result):
 		logger.error('Error adding finding to database. {}'.format(e))
 		return False
 
+def updateFinding(wid, fid, path, url, code):
+	try:
+		p = Finding(web_id=wid, id=fid, path=path, url=url, code=code)
+		p.save()
+
+		return True
+
+	except Exception as e:
+		logger.error('Error updating finding on database. {}'.format(e))
+		return False
+
 def addManualFinding(wid, path, url, code):
 	try:
 		p = Finding.objects.create(web_id=wid, url=url, path=path, code=code)
@@ -265,5 +280,55 @@ def getFindings(wid):
 		return findings
 
 	except Exception as e:
-		logger.error('Error retrieving webs from database. {}'.format(e))
+		logger.error('Error retrieving findings from database. {}'.format(e))
 		return []
+
+def getSingleFinding(fid):
+	try:
+		return Finding.objects.get(id=fid) 
+
+	except Exception as e:
+		logger.error('Error retrieving finding from database. {}'.format(e))
+		return []
+
+
+
+def getPagedFindings(wid, draw, order_col, order_dir, start, length, search_term):
+	try:
+		if order_dir == "desc":
+			order_col = '-' + order_col #Order desc
+		findings = Finding.objects.filter(web_id=wid).order_by(order_col)
+		paginator = Paginator(findings, length)
+		page = floor((start + 1) / length) + 1 # Pages start on 1
+
+		object_list = paginator.page(page).object_list
+
+		num_rows = len(findings)
+
+		data = [
+			[
+				finding.path,
+				'''<a href="{}">{}</a>'''.format(finding.url, finding.url),
+				finding.size,
+				finding.code,
+				'''<button type="button" class="btn btn-primary" onclick="editFindingModal({});"><i class="fas fa-edit"></i> Edit</button>
+				   <button type="button" class="btn btn-primary" onclick="deleteFinding({})"><i class="fas fa-trash"></i> Delete</button>'''.format(finding.id, finding.id)
+			] for finding in object_list
+		]
+
+		return json.dumps({
+			'draw': draw,
+			'recordsTotal': num_rows,
+			'recordsFiltered': num_rows,
+			'data': data
+		})
+
+	except Exception as e:
+		logger.error('Error retrieving paged findings from database. {}'.format(e))
+		return json.dumps({
+			'draw': draw,
+			'recordsTotal': 0,
+			'recordsFiltered': 0,
+			'data': [],
+			'error': "Error retrieving paged findings from database."
+		})	

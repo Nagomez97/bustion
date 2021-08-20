@@ -2,7 +2,11 @@ from django.http import HttpResponse
 from django.shortcuts import render
 from django.contrib.auth import authenticate, login, logout
 from django.shortcuts import redirect
-import os
+import os, json
+
+from django.views.decorators.csrf import csrf_exempt
+
+from app.models import Project, Web, Finding, Fuzzer
 
 import logging
 
@@ -303,32 +307,55 @@ def findings(request, errorMessage=None):
 		return redirect('/bustion/login')
 
 
+def findingInfo(request):
+	if request.user.is_authenticated:
+		try:
+			fid = request.GET['fid']
+
+			finding = database.getSingleFinding(fid)
+
+			result = {
+				'path': finding.path,
+				'url': finding.url,
+				'code': finding.code,
+				'size': finding.size,
+				'fid': fid,
+				'wid': finding.web_id	
+			}
+
+			return HttpResponse(json.dumps(result), content_type="application/json")
+
+		except Exception as e:
+			logger.error('Error showing findings. Exception: {}'.format(e))
+			return HttpResponse(json.dumps({}), content_type="application/json")
+
+	else:
+		return HttpResponse(json.dumps({}), content_type="application/json")	
+
+
 def deleteFinding(request):
 	if request.method =='POST' and request.user.is_authenticated:
-		pid = request.POST['pid']
-		wid = request.POST['wid']
 		fid = request.POST['fid']
 
 		if fid is not None:
 			if not database.deleteFinding(fid):
-				return findings(request, 'Could not delete Finding.')
+				return HttpResponse(json.dumps({'status':'error'}), content_type="application/json")
 		else:
-			return findings(request, 'Could not delete Finding. No FID was sent.')
+			return HttpResponse(json.dumps({'status':'error'}), content_type="application/json")
 	
 	
-	return findings(request)	
+	return HttpResponse(json.dumps({'status':'ok'}), content_type="application/json")	
 
 def deleteAllFinding(request):
 	if request.method =='POST' and request.user.is_authenticated:
-		pid = request.POST['pid']
 		wid = request.POST['wid']
 
 		if wid is not None:
 			if not database.deleteAllFinding(wid):
-				return findings(request, 'Could not delete all Findings.')
+				return HttpResponse(json.dumps({'status':'error'}), content_type="application/json")
 	
 	
-	return findings(request)
+	return HttpResponse(json.dumps({'status':'ok'}), content_type="application/json")
 
 # [AUTH/POST] Adds a new web
 def addFinding(request):
@@ -341,15 +368,34 @@ def addFinding(request):
 			wid = request.POST['wid']
 
 			if not database.addManualFinding(wid, path, url, code):
-				return viewFindings(request, 'Could not create finding.')
+				return HttpResponse(json.dumps({'status':'error'}), content_type="application/json")
 
 		except Exception as e:
 			logger.error('Error creating finding. Exception: {}'.format(e))
-			return viewFindings(request, 'Could not create web.')
+			return HttpResponse(json.dumps({'status':'error'}), content_type="application/json")
 	
 	
-	return viewWebs(request)
+	return HttpResponse(json.dumps({'status':'ok'}), content_type="application/json")
 
+
+def updateFinding(request):
+	if request.method =='POST' and request.user.is_authenticated:
+		try:
+			path = request.POST['path']
+			url = request.POST['url']
+			code = request.POST['code']
+			fid = request.POST['fid']
+			wid = request.POST['wid']
+
+			if not database.updateFinding(wid, fid, path, url, code):
+				return HttpResponse(json.dumps({'status':'error'}), content_type="application/json")
+
+		except Exception as e:
+			logger.error('Error updating finding. Exception: {}'.format(e))
+			return HttpResponse(json.dumps({'status':'error'}), content_type="application/json")
+	
+	
+	return HttpResponse(json.dumps({'status':'ok'}), content_type="application/json")
 
 
 
@@ -387,6 +433,7 @@ class LaunchWeb:
 	def __init__(self, wid, web):
 		self.wid = wid
 		self.web = web
+		self.url = web
 
 def launch(request):
 	if request.method =='POST' and request.user.is_authenticated:
@@ -427,8 +474,6 @@ def killJob(request):
 			wid = request.POST['wid']
 			pid = request.POST['pid']
 
-			print("1!")
-
 			web = database.getWebInfo(wid)
 
 			if not fuzz.killJob(web, pid):
@@ -445,3 +490,30 @@ def killJob(request):
 
 	else:
 		return home(request)
+
+
+
+#####################
+# Server-side datatables
+#####################
+
+
+def getPagedFindings(request):
+	try:
+		wid = request.POST['wid']
+		draw = int(request.POST['draw'])
+		order_idx = int(request.POST['order[0][column]'])
+		order_col = request.POST['columns[{}][name]'.format(order_idx)]
+		order_dir = request.POST['order[0][dir]']
+		start = int(request.POST['start'])
+		length = int(request.POST['length'])
+		search_term = request.POST['search[value]']
+
+		result = database.getPagedFindings(wid, draw, order_col, order_dir, start, length, search_term)
+
+		return HttpResponse(result, content_type="application/json")
+
+
+	except Exception as e:
+		logger.error('Error retrieving paged information. Exception: {}'.format(e))
+		return HttpResponse(json.dumps({}), content_type="application/json")
