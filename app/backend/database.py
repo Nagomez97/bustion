@@ -309,8 +309,8 @@ def getPagedFindings(wid, draw, order_col, order_dir, start, length, search_term
 			[
 				finding.path,
 				'''<a href="{}">{}</a>'''.format(finding.url, finding.url),
-				finding.size,
 				finding.code,
+				finding.size,
 				'''<button type="button" class="btn btn-primary" onclick="editFindingModal({});"><i class="fas fa-edit"></i> Edit</button>
 				   <button type="button" class="btn btn-primary" onclick="deleteFinding({})"><i class="fas fa-trash"></i> Delete</button>'''.format(finding.id, finding.id)
 			] for finding in object_list
