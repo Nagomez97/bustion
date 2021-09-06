@@ -122,17 +122,17 @@ scratch. This page gets rid of all links and provides the needed markup only.
     <section class="content-header">
       <div class="container-fluid">
         <div class="row mb-2">
-          <div class="col-sm-6">
-            <h1><a href="/bustion/projects/view?pid={{project.pid}}">{{project.project_name}}</a>/<a href="/bustion/projects/webs?pid={{project.pid}}">Webs</a></h1>
+          <div class="col-sm-10">
+            <a href="/bustion/projects/view?pid={{project.pid}}" style="position: absolute; bottom:0;">Back to project dashboard</a><!-- /<a href="/bustion/projects/webs?pid={{project.pid}}">Webs</a> -->          
           </div>
-          <div class="col-sm-4">
+          <!-- <div class="col-sm-4">
             <h1> Links: 
               <a href="/bustion/projects/view?pid={{project.pid}}">Dashboard</a> /
               <a href="/bustion/projects/webs?pid={{project.pid}}">Webs</a> /
               <a href="/bustion/projects/fuzzers?pid={{project.pid}}">Fuzzers</a> /
               <a href="/bustion/projects/launchManager?pid={{project.pid}}">Launcher</a>
             </h1>
-          </div>
+          </div> -->
           <div class="col-sm-2">
             <button type="button" class="btn btn-primary float-right" data-toggle="modal" data-target="#addweb"><i class="fas fa-plus"></i> New Web</button>
           </div>

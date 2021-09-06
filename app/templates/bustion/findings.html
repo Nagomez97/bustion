@@ -265,8 +265,8 @@ scratch. This page gets rid of all links and provides the needed markup only.
       "columnDefs": [
         { "name": "path",   "targets": 0 },
         { "name": "url",  "targets": 1 },
-        { "name": "size", "targets": 2 },
-        { "name": "code",  "targets": 3 },
+        { "name": "code", "targets": 2 },
+        { "name": "size",  "targets": 3 },
         { "name": "web",    "targets": 4 }
       ],
       "paging": true,
@@ -319,7 +319,7 @@ scratch. This page gets rid of all links and provides the needed markup only.
         $('#findings_table').DataTable().ajax.reload();
       }
       else {
-        $('#GenericErrorMessage').text('Error deleting finding.')
+        $('#GenericErrorMessage').text('Error adding finding.')
         $('#GenericErrorMessageModal').removeClass('d-none'); // Shows error message
       }
     })

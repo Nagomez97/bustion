@@ -63,10 +63,6 @@ scratch. This page gets rid of all links and provides the needed markup only.
   <div class="collapse navbar-collapse" id="collapsibleNavbar">
   <ul class="navbar-nav mr-auto">
   <li class="nav-item  active"><a class="nav-link" href="/bustion/">Home</a></li>
-
-
-
-
   </ul>
 
   <ul class="navbar-nav">
@@ -95,17 +91,17 @@ scratch. This page gets rid of all links and provides the needed markup only.
       <div class="container-fluid">
         <div class="row mb-2">
           <div class="col-sm-6">
-            <h1>Project Name: <a href="/bustion/projects/view?pid={{info.pid}}">{{info.project_name}}</a></h1>
+            <h1>Project Name: {{info.project_name}}</h1>
           </div>
 
-          <div class="col-sm-6">
+          <!-- <div class="col-sm-6">
             <h1> Links: 
               <a href="/bustion/projects/view?pid={{info.pid}}">Dashboard</a> /
               <a href="/bustion/projects/webs?pid={{info.pid}}">Webs</a> /
               <a href="/bustion/projects/fuzzers?pid={{info.pid}}">Fuzzers</a> /
               <a href="/bustion/projects/launchManager?pid={{info.pid}}">Launcher</a>
             </h1>
-          </div>
+          </div> -->
         </div>
         {% if errorMessage %}
         <div class="row mb-2">
